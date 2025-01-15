@@ -1,6 +1,6 @@
 # HW 1 Coding Portion
 # AMATH 301
-# Jayson Nguyen
+# Jayson Nguyen #ID 2420780
 
 import numpy as np
 # question 1a ----------------------------

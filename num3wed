@@ -1,0 +1,18 @@
+#3
+import numpy as np
+v = np.arange(-2,6.5,0.5)
+a = np.array([])
+
+#using if statements:
+for vn in v:
+  if vn<=2:
+    a = np.append(a,vn+1)
+  else:
+    a = np.append(a,2**vn)
+
+display(a)
+
+#vectorized:
+a = (v<=2)*(v+1)+(v>2)*(2**v)
+
+#display(a)

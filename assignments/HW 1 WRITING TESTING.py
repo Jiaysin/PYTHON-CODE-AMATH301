@@ -52,5 +52,25 @@ for j in range(0, 100):
         #xr = xc
 
     if ( abs(fc) < 1e-5 ):
-        print(xc); print(j)
+        #print(xc); print(j)
+        break
+
+#using sin(x) instead for our example
+xl = 1 ; xr = 4
+# assignment allows for zero being one of the starting interval values so use that
+for j in range(0,100):
+    xc = (xr + xl)/2
+
+    fc = np.sin(xc)
+    fxl = np.sin(xl)
+
+    if fc * fxl > 0: #checking if the values between the left interval and the center interval are above/below the x-axis
+        xl = xc #sets the new interval to have the centerpoint as the left interval, as the right side will contain the negative, telling us the root is in that bound.
+    else:
+        xr = xc #sets the new interval to have the centerpoint as teh right interval
+
+    if ( abs(fc) < 1e-5):
+        #print(xl)
+        #print(xr)
+        #print(j)
         break

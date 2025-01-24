@@ -30,8 +30,8 @@ for xn in xnewton: #initial guesses
             break
     numiters = np.append(numiters,j)
     
-# print(len(numiters))
-# print("numiters: ",numiters)
+print(len(numiters))
+print("numiters: ",numiters)
 
 #QUESTION 4
 
@@ -102,3 +102,4 @@ ystar_11_4 = ystarpoints(p,q,ystar_11_4)
 plt.plot(xstar_11_4, ystar_11_4, '-or', markeredgecolor='k', markerfacecolor='k')
 plt.axis('scaled')
 plt.show()
+

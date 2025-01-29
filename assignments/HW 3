@@ -1,0 +1,59 @@
+# implements Naive Gauss elimination without partial pivoting. may encounter a zero pivot, which breaks the algorithm.
+def naivegauss(A,b):
+    # combine A and b into an augmented matrix
+    augmat = np.hstack([A,b]) #horizontal concatenation. b must be column vector
+
+    n = len(b)
+
+    # forward elimination
+    for i in range(0,n-1): #iterate over columns
+        for j in range(i+1,n): #iterate over rows in this column, below the pivot
+            factor = augmat[j,i]/augmat[i,i]
+            augmat[j,:] = augmat[j,:] - factor*augmat[i,:]
+
+    # back substitution
+    for i in range(n-1,-1,-1): #iterate over columns
+        for j in range(i-1,-1,-1): #iterate over rows in this column, above the pivot
+            factor = augmat[j,i]/augmat[i,i]
+            augmat[j,:] = augmat[j,:] - factor*augmat[i,:]
+
+    # scale diagonal elements to 1
+    for i in range(0,n):
+        augmat[i,:] = augmat[i,:]/augmat[i,i]
+
+    return augmat[:,n]
+
+# implements Gauss elimination with partial pivoting
+def gauss(A,b):
+    # combine A and b into an augmented matrix
+    augmat = np.hstack([A,b]) #horizontal concatenation. b must be column vector
+
+    n = len(b)
+
+    # forward elimination
+    for i in range(0,n-1): #iterate over columns
+        #partial pivoting steps below-------------------------------------------
+        rowtobepivot = i+np.argmax(np.abs(augmat[i:,i]))
+        if rowtobepivot!=i: #swap rows
+            augmat[[rowtobepivot,i]] = augmat[[i,rowtobepivot]]
+        #partial pivoting steps above-------------------------------------------
+
+        for j in range(i+1,n): #iterate over rows in this column, below the pivot
+            factor = augmat[j,i]/augmat[i,i]
+            augmat[j,:] = augmat[j,:] - factor*augmat[i,:]
+
+    # back substitution
+    for i in range(n-1,-1,-1): #iterate over columns
+        for j in range(i-1,-1,-1): #iterate over rows in this column, above the pivot
+            factor = augmat[j,i]/augmat[i,i]
+            augmat[j,:] = augmat[j,:] - factor*augmat[i,:]
+
+    # scale diagonal elements to 1
+    for i in range(0,n):
+        augmat[i,:] = augmat[i,:]/augmat[i,i]
+
+    return augmat[:,n]
+
+#----------------------------------------------------------------------------------
+
+A = np.array([],[],[],[])

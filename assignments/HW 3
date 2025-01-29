@@ -1,10 +1,14 @@
+import numpy as np
+from scipy import optimize
+import matplotlib.pyplot as plt
+
 # implements Naive Gauss elimination without partial pivoting. may encounter a zero pivot, which breaks the algorithm.
 def naivegauss(A,b):
     # combine A and b into an augmented matrix
     augmat = np.hstack([A,b]) #horizontal concatenation. b must be column vector
 
     n = len(b)
-
+    
     # forward elimination
     for i in range(0,n-1): #iterate over columns
         for j in range(i+1,n): #iterate over rows in this column, below the pivot
@@ -24,7 +28,11 @@ def naivegauss(A,b):
     return augmat[:,n]
 
 # implements Gauss elimination with partial pivoting
+
 def gauss(A,b):
+    
+    rowflips = 0 # for question 2
+    
     # combine A and b into an augmented matrix
     augmat = np.hstack([A,b]) #horizontal concatenation. b must be column vector
 
@@ -36,6 +44,7 @@ def gauss(A,b):
         rowtobepivot = i+np.argmax(np.abs(augmat[i:,i]))
         if rowtobepivot!=i: #swap rows
             augmat[[rowtobepivot,i]] = augmat[[i,rowtobepivot]]
+            rowflips += 1
         #partial pivoting steps above-------------------------------------------
 
         for j in range(i+1,n): #iterate over rows in this column, below the pivot
@@ -51,9 +60,57 @@ def gauss(A,b):
     # scale diagonal elements to 1
     for i in range(0,n):
         augmat[i,:] = augmat[i,:]/augmat[i,i]
+        
+    rowflips = rowflips / n
+        
+    return augmat[:,n], rowflips
 
-    return augmat[:,n]
 
 #----------------------------------------------------------------------------------
+epsvec = np.logspace (0, -15, 16) #does the log from 0 to -15. log(0) = 1, etc etc.
+# print(epsvec)
+errorvec = np.array([])
+for epsvalue in epsvec:
+    xnaive = naivegauss([[epsvalue, 2, 1, 10, 5],[4, 6, 10, 4, 6],[5, 10, 8, 0, 7],[8, 0, 8, 2, 4],[9, 8, 1, 0, 4]],[[-13], [6], [8], [-8], [21]]) [0] #the 0 indicates the index and what value i want. since my thing is return matrix AND rowflip, i ned to do this
 
-A = np.array([],[],[],[])
+    # print("when epsvalue = ", epsvalue)
+    # print("naive guess x = ", naivegauss_run)
+    
+    xfull = gauss([[epsvalue, 2, 1, 10, 5],[4, 6, 10, 4, 6],[5, 10, 8, 0, 7],[8, 0, 8, 2, 4],[9, 8, 1, 0, 4]],[[-13], [6], [8], [-8], [21]]) [0]
+
+    # print("when epsvalue = ", epsvalue)
+    # print(" full x = ", xfull)
+    
+    error = np.linalg.norm(xnaive - xfull)
+    errorvec = np.append(errorvec, error)
+    
+logeps = np.log10(epsvec)
+logerror = np.log10(errorvec)
+plt.plot(logeps, logerror, 'or-')
+plt.xlabel('$\log_{10}(\epsilon)$')
+plt.ylabel('$log_{10}(||x_{naive}-x_{full}||_2)$')
+#plt.show()
+    
+
+n = np.array([4, 8, 16, 32, 64, 128, 256])
+percentflips = np.zeros(len(n))
+
+for j in range(len(n)):
+    
+    xn = n[j]
+    
+    np.random.seed(1) #ensures your random numbers are the same as the autograder’s
+    A=np.random.randint(0,100,[xn,xn])
+    A=A.astype(np.float32) #convert integers to floating-point objects (decimals)
+    b=np.random.randint(0,100,[xn,1])
+    if xn==256:
+        bseedcheck = b  
+        
+    rowflips = gauss(A,b)[1]
+    
+    percentflips[j] = rowflips
+    
+print("percentage of flips in each n value is: ", percentflips)
+
+#PERCENTAGES ARENT RIGHT
+

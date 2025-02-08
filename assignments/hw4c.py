@@ -58,7 +58,7 @@ v = np.array([0,
               0,
               0]) #initial guess
 fv0 = f(v)
-jv0 = J(v)
+Jv0 = J(v)
 
 #2b)
 
@@ -71,10 +71,10 @@ for i in range(0,100):
     
     if np.linalg.norm(f(v), 2) < 1e-5:
         vnonlin = v
-        vnumiterlin = i
+        numiternonlin = i
         break
 print(vnonlin)
-print(vnumiterlin)
+print(numiternonlin)
 
 # number 3
 
@@ -99,9 +99,9 @@ print(np.shape(Arank1))
 # 3b)
 u10 = U[:, 0:10] # 200 x 10
 v10 = VT[0:10, :] # 10 x 300
-σ10 = Smat[10,10] # 10 x 10
+σ10 = Smat[0:10,0:10] # 10 x 10
 
-Arank10 = u10 @ v10 * σ10
+Arank10 = (u10 @ σ10) @ v10
 
 print(np.shape(Arank10))
 
@@ -129,7 +129,7 @@ print(np.shape(Arankr))
 #3d)
 
 #compression is rsvd + usvd + Σrsvd
-compressionfraction = (200 + 300 + 1) / 60000
+compressionfraction = (200 + 300 + 1) * rsvd / 60000
 
 fig, ax = plt.subplots(2,2)
 ax[0,0].imshow(Arank1, cmap='gray')

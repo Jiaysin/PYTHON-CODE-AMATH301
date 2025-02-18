@@ -1,7 +1,7 @@
 import numpy as np
 import math
 import matplotlib.pyplot as plt
-
+import scipy.integrate
 # question 1
 
 #approximate area of exp(tan(x)) on -1 <= x <= 1
@@ -42,6 +42,13 @@ for k in range(1,2*N,2): #half-integer subscripts
 for k in range(2,2*N-1,2): #integer subscripts
     integral_simp += 2*f(xvec[k])
 integral_simp = integral_simp*h/3
+
+
+
+
+
+
+
 
 #question 2
 #2a
@@ -84,11 +91,72 @@ cp2vec[-1] = (cpvec[-2] - cpvec[-1])/1
 # print(cp2vec)
 
 #2c
-x_values = np.linspace(1, N, N)
-plt.plot(x_values,cpvec,'-ro',label='c\'(t) [$/month]')
-plt.plot(x_values,cp2vec,'-bo',label='c\'\'(t) [$/month^2]')
-plt.legend()
-plt.xlabel('month of 2024')
+# x_values = np.linspace(1, N, N)
+# plt.plot(x_values,cpvec,'-ro',label='c\'(t) [$/month]')
+# plt.plot(x_values,cp2vec,'-bo',label='c\'\'(t) [$/month^2]')
+# plt.legend()
+# plt.xlabel('month of 2024')
 # plt.show()
 
+
+
+
+
+
 #question 3
+def f(x, y):
+    if (x - 1) ** 2 + (y - 1) ** 2 < 1:  # Exclude the cylinder region
+        return 0
+    elif x**2 + y**2 <= 1:  # Inside the paraboloid
+        return 1 - x**2 - y**2
+    return 0  # Outside the shape
+
+
+volume, error = scipy.integrate.dblquad(f, -2, 2, -2, 2)
+# print(volume)
+
+
+
+
+#question 4
+
+def f(t):
+    return np.exp(1/t)
+
+#4a
+derivtrue = -0.412180317675
+
+#4b
+dtvec = np.array([2**(-i) for i in range(11)])
+
+#4c
+
+# second order
+logrelerr2o = np.zeros(len(dtvec))
+for i in range(len(dtvec)):
+    dt = dtvec[i]
+    fapprox = (f(2+dt) - f(2-dt))/ (2*dt)
+    logrelerr2o[i] = np.abs((fapprox - derivtrue)/derivtrue)
+# print(logrelerr2o)
+
+#4d
+
+#fourth order
+
+logrelerr4o = np.zeros(len(dtvec))
+for i in range(len(dtvec)):
+    dt = dtvec[i]
+    fapprox = (-f(2 + 2*dt) + 8*f(2 + dt) - 8*f(2 - dt) + f(2 - 2*dt)) / (12*dt)
+    logrelerr4o[i] = np.abs((fapprox - derivtrue)/derivtrue)
+# print(logrelerr4o)
+
+#4e
+
+# plt.plot(np.log(dtvec),logrelerr2o,'-bo',label='2nd order FD')
+# plt.plot(np.log(dtvec),logrelerr4o,'-go',label='4th order FD')
+# plt.legend()
+# plt.xlabel('log(dt)')
+# plt.ylabel('log(relative error)')
+# plt.show()
+
+

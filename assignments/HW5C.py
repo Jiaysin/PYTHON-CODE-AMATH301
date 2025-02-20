@@ -52,41 +52,42 @@ integral_simp = integral_simp*h/3
 
 #question 2
 #2a
-bitcoin = np.load('assignments/bitcoin.npy')
+#bitcoin = np.load('assignments/bitcoin.npy')
+bitcoin = np.load('bitcoin.npy')
 
 
 # delta t found using difference bwt two points? 
 
 N = len(bitcoin)
 
-cpvec = np.zeros(N)
+cpvec = np.zeros(N).reshape(-1,1)
 
-
+dt = 1
 #forward for first
-cpvec[0] = (bitcoin[1] - bitcoin[0])/1
+cpvec[0] = (bitcoin[0 + dt] - bitcoin[0])/dt
 
-#forward finite diff 
+#centered finite diff 
 for i in range(1, N-1) : #get the second value and the second to last value (ie only the middle points)
-    cpvec[i] = (bitcoin[i+1]-bitcoin[i])/1
+    cpvec[i] = (bitcoin[i + dt] - bitcoin[i - dt])/(2 * dt)
     
-#forward for end
-cpvec[-1] = (bitcoin[-2] - bitcoin[-1])/1
+#backward for end
+cpvec[-1] = (bitcoin[-1] - bitcoin[-1 - dt])/dt
 
 # print(cpvec)
 
 
 #2b 
-cp2vec = np.zeros(N)
+cp2vec = np.zeros(N).reshape(-1,1)
 
 #forward for first
-cp2vec[0] = (cpvec[1] - cpvec[0])/1
+cp2vec[0] = (cpvec[0 + dt] - cpvec[0])/dt
 
-#forward finite diff 
+#centered finite diff 
 for i in range(1, N-1) : #get the second value and the second to last value (ie only the middle points)
-    cp2vec[i] = (cpvec[i+1] - cpvec[i])/1
+    cp2vec[i] = (cpvec[i + dt] - cpvec[i - dt])/(2 * dt)
     
-#forward for end
-cp2vec[-1] = (cpvec[-2] - cpvec[-1])/1
+#backward for end
+cp2vec[-1] = (cpvec[-1] - cpvec[-1 - dt])/dt
 
 # print(cp2vec)
 
@@ -123,32 +124,42 @@ volume, error = scipy.integrate.dblquad(f, -2, 2, -2, 2)
 def f(t):
     return np.exp(1/t)
 
+def f3(t):  # Third derivative for second-order error
+    return (np.exp(1/t) * (3*t - 1)) / (t**6)
+
+def f5(t):  # Fifth derivative for fourth-order error
+    return (np.exp(1/t) * (15*t**3 - 20*t**2 + 5*t - 1)) / (t**10)
+
 #4a
-derivtrue = -0.412180317675
+derivtrue = -(np.exp(1/2))/(2**2)
+# -0.41218031767503205
 
 #4b
-dtvec = np.array([2**(-i) for i in range(11)])
+dtvec = np.array([2**(-i-1) for i in range(10)], dtype=np.float64)
+print('dtvec = ', dtvec)
 
 #4c
 
 # second order
-logrelerr2o = np.zeros(len(dtvec))
+logrelerr2o = np.zeros(len(dtvec), dtype=np.float64)
 for i in range(len(dtvec)):
     dt = dtvec[i]
-    fapprox = (f(2+dt) - f(2-dt))/ (2*dt)
-    logrelerr2o[i] = np.abs((fapprox - derivtrue)/derivtrue)
-# print(logrelerr2o)
+    fapprox = (f(2 + dt) - f(2 - dt))/ (2 * dt)
+    logrelerr2o[i] = np.log(np.abs((fapprox - derivtrue)/derivtrue))
+
+print(logrelerr2o)
 
 #4d
 
 #fourth order
 
-logrelerr4o = np.zeros(len(dtvec))
+logrelerr4o = np.zeros(len(dtvec), dtype=np.float64)
 for i in range(len(dtvec)):
     dt = dtvec[i]
-    fapprox = (-f(2 + 2*dt) + 8*f(2 + dt) - 8*f(2 - dt) + f(2 - 2*dt)) / (12*dt)
-    logrelerr4o[i] = np.abs((fapprox - derivtrue)/derivtrue)
-# print(logrelerr4o)
+    fapprox = (-f(2 + 2 * dt) + 8*f(2 + dt) - 8*f(2 - dt) + f(2 - 2*dt)) / (12 * dt)
+    logrelerr4o[i] = np.log(np.abs((fapprox - derivtrue)/derivtrue))
+    
+print(logrelerr4o)
 
 #4e
 

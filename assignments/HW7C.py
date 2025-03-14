@@ -6,8 +6,8 @@ from scipy.interpolate import KroghInterpolator
 
 #1 
 
-
-data = np.loadtxt('assignments\salmondata.csv', delimiter = ",", dtype = int)
+data = np.loadtxt('salmondata.csv', delimiter = ",", dtype = int)
+# data = np.loadtxt('assignments\salmondata.csv', delimiter = ",", dtype = int)
 
 years = data[:, 0]
 salmon = data[:,1]
